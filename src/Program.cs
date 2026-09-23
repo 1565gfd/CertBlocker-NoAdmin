@@ -83,8 +83,13 @@ namespace CertBlocker
             try
             {
                 store.Open(OpenFlags.ReadWrite);
+                bool exists = false;
                 foreach (var c in store.Certificates)
-                    if (c.Thumbprint == cert.Thumbprint) return "already";
+                {
+                    if (c.Thumbprint == cert.Thumbprint) exists = true;
+                    c.Dispose();
+                }
+                if (exists) return "already";
                 store.Add(cert);
                 return "ok";
             }
@@ -142,13 +147,22 @@ namespace CertBlocker
                                 || (!string.IsNullOrEmpty(c.FriendlyName) && c.FriendlyName.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0);
                             if (match)
                                 found.Add(new FoundCert { Cert = c, Location = loc.ToString(), Store = sn.ToString() });
+                            else
+                                c.Dispose(); // не подошёл — освобождаем сразу
                         }
                     }
                     catch { }
                     finally { store.Close(); }
                 }
             }
-            return found.GroupBy(f => f.Cert.Thumbprint).Select(g => g.First()).ToList();
+            // уникализация по отпечатку с освобождением дубликатов
+            var byThumb = new Dictionary<string, FoundCert>();
+            foreach (var f in found)
+            {
+                if (byThumb.ContainsKey(f.Cert.Thumbprint)) f.Cert.Dispose();
+                else byThumb[f.Cert.Thumbprint] = f;
+            }
+            return new List<FoundCert>(byThumb.Values);
         }
     }
 
@@ -276,6 +290,7 @@ namespace CertBlocker
 
         private void UpdateBlocked()
         {
+            lstBlocked.BeginUpdate();
             lstBlocked.Items.Clear();
             foreach (var c in CertOps.GetBlocked())
             {
@@ -286,6 +301,7 @@ namespace CertBlocker
                 lstBlocked.Items.Add(item);
                 c.Dispose();               // объект сертификата больше не нужен
             }
+            lstBlocked.EndUpdate();
         }
 
         private void FillFound(List<FoundCert> results)
@@ -296,6 +312,7 @@ namespace CertBlocker
                 var old = it.Tag as X509Certificate2;
                 if (old != null) old.Dispose();
             }
+            lstFound.BeginUpdate();
             lstFound.Items.Clear();
             foreach (var r in results)
             {
@@ -306,6 +323,7 @@ namespace CertBlocker
                 item.Tag = r.Cert;
                 lstFound.Items.Add(item);
             }
+            lstFound.EndUpdate();
             if (lstFound.Items.Count > 0) lstFound.Items[0].Selected = true;
         }
 

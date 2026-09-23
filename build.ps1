@@ -17,7 +17,7 @@ $outDir = Join-Path $root 'build'
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $out = Join-Path $outDir 'CertBlocker.exe'
 
-& $csc /nologo /target:winexe "/out:$out" `
+& $csc /nologo /optimize+ /target:winexe "/out:$out" `
     "/win32manifest:$root\src\app.manifest" `
     /reference:System.dll /reference:System.Drawing.dll `
     /reference:System.Windows.Forms.dll /reference:System.Security.dll `
