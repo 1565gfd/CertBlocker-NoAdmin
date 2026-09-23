@@ -1,0 +1,17 @@
+# Сборка
+build/
+*.exe
+*.pdb
+*.obj
+
+# Временное
+*.tmp
+*.log
+[Tt]emp/
+
+# IDE / ОС
+.vs/
+.idea/
+*.user
+Thumbs.db
+desktop.ini
