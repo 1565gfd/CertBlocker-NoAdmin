@@ -53,6 +53,12 @@ D6E2B38E1D57A9C287BEC9C6570202C12DC0F16F1B6B3EA91F434E0E62DAE41A
 - Единственное изменение — запись в хранилище `CurrentUser\Disallowed`, обратимая
   кнопкой «Разблокировать». Сеть не используется, внешние процессы не запускаются.
 
+## Версии
+
+- [CertBlocker](https://github.com/1565gfd/CertBlocker) — для всей системы, требуются права администратора.
+- [CertBlocker-NoAdmin](https://github.com/1565gfd/CertBlocker-NoAdmin) — для текущего пользователя, без прав администратора.
+- [CertBlocker-Lite](https://github.com/1565gfd/CertBlocker-Lite) — минимальная версия без прав администратора.
+
 ## Лицензия
 
 [MIT](LICENSE)
