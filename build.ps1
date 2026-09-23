@@ -22,7 +22,7 @@ $out = Join-Path $outDir 'CertBlocker.exe'
     /reference:System.dll /reference:System.Drawing.dll `
     /reference:System.Windows.Forms.dll /reference:System.Security.dll `
     /reference:System.Core.dll `
-    "$root\src\Program.cs"
+    "$root\src\Program.cs" "$root\src\AssemblyInfo.cs"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Готово: $out" -ForegroundColor Green
